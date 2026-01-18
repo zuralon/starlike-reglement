@@ -74,16 +74,22 @@ npm run dev
 
 ⚠️ Pour l’accès admin en local, la variable ADMIN_PASSWORD doit être définie.
 
+---
+
 🌍 Déploiement
 La branche principale est utilisée pour la production
 Les autres branches sont déployées en preview
 Toujours tester l’accès admin sur le déploiement de production
 Un redeploy est nécessaire après toute modification des variables d’environnement
 
+---
+
 ✅ Bonnes pratiques
 Ne pas utiliser les URLs de preview pour l’admin
 Redeployer après modification des variables d’environnement
 Supprimer les logs de debug avant la production
+
+---
 
 🧠 Améliorations possibles
 Sessions admin avec expiration
@@ -91,6 +97,8 @@ Plusieurs comptes administrateurs
 Historique des modifications
 Stockage en base de données
 Gestion des rôles
+
+---
 
 📄 Licence
 Projet privé / usage interne uniquement.
@@ -138,8 +146,9 @@ starlike-reglement/
 ### 🔑 Environment Variables
 The admin password is stored securely using an environment variable.
 
-Key	Description
-ADMIN_PASSWORD	Admin access password
+| Key | Description |
+|---|---|
+| `ADMIN_PASSWORD` | Admin access password |
 
 ⚠️ Never store the password directly in the code.
 
@@ -160,16 +169,22 @@ npm run dev
 
 ⚠️ For local admin access, the ADMIN_PASSWORD variable must be set.
 
+---
+
 🌍 Deployment
 Main branch is used for production
 Other branches are deployed as previews
 Always test admin access on the production deployment
 Redeploy required after environment variable updates
 
+---
+
 ✅ Best Practices
 Do not test admin access on preview deployments
 Redeploy after environment variable changes
 Remove debug logs before production
+
+---
 
 🧠 Possible Improvements
 Admin sessions with expiration
@@ -177,6 +192,8 @@ Multiple admin accounts
 Change history and audit logs
 Database storage
 Role‑based access control
+
+---
 
 📄 License
 Private project / internal use only.
