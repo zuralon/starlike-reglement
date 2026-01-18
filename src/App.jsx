@@ -57,8 +57,13 @@ function StaffSection({ staff, lang }) {
               <p className="font-bold text-sm truncate">
                 {member.personaname}
               </p>
+
               <p className="text-xs text-blue-400 font-semibold">
                 {roles[member.steamid]?.[lang]}
+              </p>
+
+              <p className="text-[10px] text-slate-400 truncate">
+                SteamID: {member.steamid}
               </p>
             </div>
           </div>
