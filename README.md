@@ -118,6 +118,8 @@ Backend: Vercel Serverless Functions
 Hosting: Vercel
 Security: Environment variables
 
+---
+
 ### 📁 Project Structure
 
 starlike-reglement/
@@ -130,6 +132,8 @@ starlike-reglement/
 ├── index.html
 ├── package.json
 └── README.md
+
+---
 
 ### 🔑 Environment Variables
 The admin password is stored securely using an environment variable.
