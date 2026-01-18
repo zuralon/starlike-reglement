@@ -67,44 +67,6 @@ function StaffSection({ staff, lang }) {
     </div>
   );
 }
-
-  return (
-    <div className="mt-10 bg-slate-900/70 border border-slate-700 rounded-2xl p-6">
-      <h3 className="font-bold mb-6 text-slate-300 flex items-center gap-2">
-        <Shield size={18} />
-        {lang === "fr" ? "Haut Staff" : "Top Staff"}
-      </h3>
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-        {staff.map((member) => (
-          <div
-            key={member.steamid}
-            className="flex items-center gap-4 bg-slate-800 rounded-xl p-4"
-          >
-            <img
-              src={member.avatarfull}
-              alt={member.personaname}
-              className="w-16 h-16 rounded-full border border-slate-600"
-            />
-
-            <div>
-              <p className="font-bold text-lg">
-                {member.personaname}
-              </p>
-              <p className="text-sm text-blue-400 font-semibold">
-                {roles[member.steamid]?.[lang]}
-              </p>
-              <p className="text-xs text-slate-400">
-                SteamID: {member.steamid}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 export default function App() {
   const [lang, setLang] = useState("fr");
   const [data, setData] = useState(null);
