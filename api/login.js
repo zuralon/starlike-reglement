@@ -1,4 +1,6 @@
-export const runtime = "nodejs";
+export const config = {
+  runtime: "nodejs",
+};
 
 export default function handler(req, res) {
   if (req.method !== "POST") {
