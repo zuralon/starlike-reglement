@@ -1,0 +1,20 @@
+{
+  "fr": {
+    "title": "RÈGLEMENT IG",
+    "subtitle": "StraLike Serveur",
+    "important": {
+      "title": "IMPORTANT",
+      "content": "ATTENTION car les règles peuvent changer..."
+    },
+    "sections": []
+  },
+  "en": {
+    "title": "RULES IG",
+    "subtitle": "StraLike Server",
+    "important": {
+      "title": "IMPORTANT",
+      "content": "ATTENTION because the rules can change..."
+    },
+    "sections": []
+  }
+}
