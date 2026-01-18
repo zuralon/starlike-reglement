@@ -70,10 +70,11 @@ export default function App() {
   const submitLogin = async (e) => {
     e.preventDefault();
     const res = await fetch("/api/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ password })
-    });
+  method: "POST",
+  headers: {
+    "x-admin-password": password
+  }
+});
 
     if (res.ok) {
       setIsAdmin(true);
