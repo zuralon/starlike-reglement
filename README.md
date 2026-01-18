@@ -100,6 +100,11 @@ Gestion des rôles
 
 ---
 
+📧 Contact Discord personnel :
+@Zuralon
+
+---
+
 📄 Licence
 Projet privé / usage interne uniquement.
 
@@ -193,6 +198,10 @@ Change history and audit logs
 Database storage
 Role‑based access control
 
+---
+
+📧 Personal Contact Discord :
+@Zuralon
 ---
 
 📄 License
