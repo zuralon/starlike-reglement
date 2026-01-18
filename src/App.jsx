@@ -31,14 +31,8 @@ const IconMap = {
 
 function StaffSection({ staff, lang }) {
   const roles = {
-    "76561199089712499": {
-      fr: "Fondateur",
-      en: "Founder"
-    },
-    "76561198353848309": {
-      fr: "Co‑Fondateur",
-      en: "Co‑Founder"
-    }
+    "76561199089712499": { fr: "Fondateur", en: "Founder" },
+    "76561198353848309": { fr: "Co‑Fondateur", en: "Co‑Founder" }
   };
 
   return (
@@ -59,7 +53,6 @@ function StaffSection({ staff, lang }) {
               alt={member.personaname}
               className="w-10 h-10 rounded-full border border-slate-600 shrink-0"
             />
-
             <div className="min-w-0">
               <p className="font-bold text-sm truncate">
                 {member.personaname}
