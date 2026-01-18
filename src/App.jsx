@@ -269,7 +269,7 @@ export default function App() {
 
     <div className="flex items-center gap-3">
     <button
-    onClick={() => setLang(lang === "FR/en" ? "EN/fr" : "fr")}
+    onClick={() => setLang(lang === "fr" ? "en" : "fr")}
     className="px-3 py-1 bg-slate-800 rounded flex items-center gap-1"
     >
     <Globe size={14} /> {lang.toUpperCase()}
