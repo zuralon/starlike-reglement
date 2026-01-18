@@ -42,6 +42,42 @@ function StaffSection({ staff, lang }) {
   };
 
   return (
+    <div className="bg-slate-900/70 border border-slate-700 rounded-2xl p-4">
+      <h3 className="font-bold mb-4 text-slate-300 flex items-center gap-2 text-sm">
+        <Shield size={16} />
+        {lang === "fr" ? "Haut Staff" : "Top Staff"}
+      </h3>
+
+      {/* LISTE VERTICALE */}
+      <div className="flex flex-col gap-3">
+        {staff.map((member) => (
+          <div
+            key={member.steamid}
+            className="flex items-center gap-3 bg-slate-800 rounded-xl p-3 w-full"
+          >
+            <img
+              src={member.avatarfull}
+              alt={member.personaname}
+              className="w-10 h-10 rounded-full border border-slate-600 shrink-0"
+            />
+
+            <div className="min-w-0">
+              <p className="font-bold text-sm truncate">
+                {member.personaname}
+              </p>
+
+              <p className="text-xs text-blue-400 font-semibold">
+                {roles[member.steamid]?.[lang]}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+  return (
     <div className="mt-10 bg-slate-900/70 border border-slate-700 rounded-2xl p-6">
       <h3 className="font-bold mb-6 text-slate-300 flex items-center gap-2">
         <Shield size={18} />
