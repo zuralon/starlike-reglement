@@ -29,10 +29,60 @@ const IconMap = {
   Flag
 };
 
+function StaffSection({ staff, lang }) {
+  const roles = {
+    "76561199089712499": {
+      fr: "Fondateur",
+      en: "Founder"
+    },
+    "76561198353848309": {
+      fr: "Co‑Fondateur",
+      en: "Co‑Founder"
+    }
+  };
+
+  return (
+    <div className="mt-10 bg-slate-900/70 border border-slate-700 rounded-2xl p-6">
+      <h3 className="font-bold mb-6 text-slate-300 flex items-center gap-2">
+        <Shield size={18} />
+        {lang === "fr" ? "Haut Staff" : "Top Staff"}
+      </h3>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {staff.map((member) => (
+          <div
+            key={member.steamid}
+            className="flex items-center gap-4 bg-slate-800 rounded-xl p-4"
+          >
+            <img
+              src={member.avatarfull}
+              alt={member.personaname}
+              className="w-16 h-16 rounded-full border border-slate-600"
+            />
+
+            <div>
+              <p className="font-bold text-lg">
+                {member.personaname}
+              </p>
+              <p className="text-sm text-blue-400 font-semibold">
+                {roles[member.steamid]?.[lang]}
+              </p>
+              <p className="text-xs text-slate-400">
+                SteamID: {member.steamid}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
   const [lang, setLang] = useState("fr");
   const [data, setData] = useState(null);
   const [activeTab, setActiveTab] = useState("general");
+  const [staff, setStaff] = useState([]);
 
   const [isAdmin, setIsAdmin] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -51,6 +101,13 @@ export default function App() {
       setActiveTab(d.fr.sections[0].id);
     });
   }, []);
+
+  useEffect(() => {
+  fetch("/api/staff")
+    .then(res => res.json())
+    .then(setStaff)
+    .catch(() => setStaff([]));
+}, []);
 
   if (!data) {
     return (
@@ -268,12 +325,24 @@ export default function App() {
     </div>
 
     <div className="flex items-center gap-3">
-    <button
-    onClick={() => setLang(lang === "fr" ? "en" : "fr")}
-    className="px-3 py-1 bg-slate-800 rounded flex items-center gap-1"
-    >
-    <Globe size={14} /> {lang.toUpperCase()}
-    </button>
+    <div className="flex bg-slate-800 rounded-lg overflow-hidden">
+  <button
+    onClick={() => setLang("fr")}
+    className={`px-3 py-1 font-bold ${
+      lang === "fr" ? "bg-blue-600 text-white" : "text-slate-400"
+    }`}
+  >
+    FR
+  </button>
+  <button
+    onClick={() => setLang("en")}
+    className={`px-3 py-1 font-bold ${
+      lang === "en" ? "bg-blue-600 text-white" : "text-slate-400"
+    }`}
+  >
+    EN
+  </button>
+</div>
 
     {isAdmin ? (
       <button
@@ -442,6 +511,10 @@ export default function App() {
     </div>
     </div>
     </div>
+    
+    {/* STAFF */}
+    <StaffSection staff={staff} lang={lang} />
+
     </main>
     {/* FOOTER */}
     <footer className="bg-slate-900/80 border-t border-slate-800 text-center py-4 text-sm text-slate-400">
