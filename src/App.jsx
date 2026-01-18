@@ -456,6 +456,11 @@ export default function App() {
         </button>
       );
     })}
+      
+    {/* HAUT STAFF */}
+    <div className="mt-6">
+      <StaffSection staff={staff} lang={lang} />
+    </div>
     </nav>
 
     {/* CONTENT */}
@@ -512,8 +517,7 @@ export default function App() {
     </div>
     </div>
     
-    {/* STAFF */}
-    <StaffSection staff={staff} lang={lang} />
+
 
     </main>
     {/* FOOTER */}
