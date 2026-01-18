@@ -48,7 +48,6 @@ function StaffSection({ staff, lang }) {
         {lang === "fr" ? "Haut Staff" : "Top Staff"}
       </h3>
 
-      {/* LISTE VERTICALE */}
       <div className="flex flex-col gap-3">
         {staff.map((member) => (
           <div
@@ -65,7 +64,6 @@ function StaffSection({ staff, lang }) {
               <p className="font-bold text-sm truncate">
                 {member.personaname}
               </p>
-
               <p className="text-xs text-blue-400 font-semibold">
                 {roles[member.steamid]?.[lang]}
               </p>
