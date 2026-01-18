@@ -1,22 +1,25 @@
-import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useEffect, useState } from "react";
+import { jsPDF } from "jspdf";
 import {
   Shield,
   Globe,
-  Edit3,
-  Save,
-  X,
   Lock,
-  Unlock,
+  LogOut,
+  Save,
   AlertTriangle,
   Hammer,
   Swords,
   Flag,
-  LogOut,
+  Loader2,
   Plus,
   Trash2,
-  Loader2
-} from 'lucide-react';
+  CheckCircle,
+  Youtube,
+  Twitch,
+  MessageCircle,
+  Boxes,
+  ThumbsUp
+} from "lucide-react";
 
 /* ================= ICON MAP ================= */
 const IconMap = {
@@ -26,321 +29,448 @@ const IconMap = {
   Flag
 };
 
-/* ================= COMPONENT ================= */
-export default function StraLikeRulesSecure() {
-  const [lang, setLang] = useState('fr');
+export default function App() {
+  const [lang, setLang] = useState("fr");
   const [data, setData] = useState(null);
+  const [activeTab, setActiveTab] = useState("general");
 
-  // Admin / sécurité
   const [isAdmin, setIsAdmin] = useState(false);
-  const [showLoginModal, setShowLoginModal] = useState(false);
-  const [passwordInput, setPasswordInput] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const [showLogin, setShowLogin] = useState(false);
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+
   const [isSaving, setIsSaving] = useState(false);
+  const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const [activeTab, setActiveTab] = useState('general');
-
-  /* ================= LOAD DATA FROM SERVER ================= */
+  /* ================= LOAD RULES ================= */
   useEffect(() => {
-    fetch('/api/rules')
-      .then(res => res.json())
-      .then(serverData => setData(serverData))
-      .catch(() => alert("Erreur chargement des règles"));
+    fetch("/api/rules")
+    .then((res) => res.json())
+    .then((d) => {
+      setData(d);
+      setActiveTab(d.fr.sections[0].id);
+    });
   }, []);
 
   if (!data) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-slate-950 text-white">
-        Chargement...
+      Chargement...
       </div>
     );
   }
 
   const content = data[lang];
-  const toggleLang = () => setLang(prev => (prev === 'fr' ? 'en' : 'fr'));
+  const sectionIndex = content.sections.findIndex(
+    (s) => s.id === activeTab
+  );
+  const activeSection = content.sections[sectionIndex];
 
-  /* ================= LOGIN ADMIN (SERVER) ================= */
+  /* ================= LOGIN ================= */
   const submitLogin = async (e) => {
     e.preventDefault();
-
-    const res = await fetch('/api/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ password: passwordInput })
+    const res = await fetch("/api/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ password })
     });
 
     if (res.ok) {
       setIsAdmin(true);
-      setShowLoginModal(false);
-      setLoginError('');
-      setPasswordInput('');
+      setShowLogin(false);
+      setPassword("");
+      setLoginError("");
     } else {
-      setLoginError('Mot de passe incorrect');
+      setLoginError("Mot de passe incorrect");
     }
   };
 
-  const handleLogout = () => {
-    setIsAdmin(false);
+  /* ================= ADD / REMOVE RULE ================= */
+  const addRule = () => {
+    const copy = structuredClone(data);
+    copy[lang].sections[sectionIndex].rules.push("Nouvelle règle...");
+    setData(copy);
   };
 
-  /* ================= SAVE TO SERVER ================= */
+  const removeRule = (ruleIndex) => {
+    const copy = structuredClone(data);
+    copy[lang].sections[sectionIndex].rules.splice(ruleIndex, 1);
+    setData(copy);
+  };
+
+  /* ================= SAVE + CONFIRMATION ================= */
   const handleSave = async () => {
+    const updated = structuredClone(data);
+    updated[lang].lastUpdate = new Date().toISOString().split("T")[0];
+
     setIsSaving(true);
 
-    await fetch('/api/rules', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
+    await fetch("/api/rules", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-admin": "true"
+      },
+      body: JSON.stringify(updated)
     });
 
+    setData(updated);
     setIsSaving(false);
-    alert('Sauvegardé côté serveur ✅');
+    setSaveSuccess(true);
+
+    setTimeout(() => setSaveSuccess(false), 2000);
   };
 
-  /* ================= EDIT HANDLERS ================= */
-  const updateImportant = (text) => {
-    setData(prev => ({
-      ...prev,
-      [lang]: {
-        ...prev[lang],
-        important: { ...prev[lang].important, content: text }
-      }
-    }));
+  /* ================= PDF ================= */
+  const generatePDF = () => {
+    const doc = new jsPDF({ unit: "mm", format: "a4" });
+    const w = doc.internal.pageSize.getWidth();
+    const h = doc.internal.pageSize.getHeight();
+    let y = 18;
+
+    /* ===== BACKGROUND ===== */
+    doc.setFillColor(15, 23, 42);
+    doc.rect(0, 0, w, h, "F");
+
+    /* ===== TITLE ===== */
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(18);
+    doc.text(content.title, w / 2, y, { align: "center" });
+    y += 7;
+
+    doc.setFontSize(11);
+    doc.setTextColor(148, 163, 184);
+    doc.text(content.subtitle, w / 2, y, { align: "center" });
+    y += 6;
+
+    doc.setFontSize(9);
+    doc.text(
+      `Version ${content.version} • ${content.lastUpdate}`,
+      w / 2,
+      y,
+      { align: "center" }
+    );
+    y += 10;
+
+    /* ===== IMPORTANT BLOCK (FINAL – WIDTH FIX) ===== */
+
+    const boxX = 10;
+    const boxWidth = w - 20;
+    const paddingX = 10;
+    const paddingTop = 8;
+    const paddingBottom = 8;
+    const titleHeight = 6;
+    const lineHeight = 4.8;
+
+    // largeur réelle du texte (clé du fix)
+    const textWidth = boxWidth - paddingX * 2;
+
+    // normalisation texte + wrap
+    const rawLines = content.important.content
+    .split("\n")
+    .flatMap(line => doc.splitTextToSize(line, textWidth));
+
+    // hauteur calculée
+    const boxHeight =
+    paddingTop +
+    titleHeight +
+    rawLines.length * lineHeight +
+    paddingBottom;
+
+    // cadre rouge
+    doc.setFillColor(127, 29, 29);
+    doc.roundedRect(boxX, y, boxWidth, boxHeight, 3, 3, "F");
+
+    // titre
+    doc.setTextColor(254, 202, 202);
+    doc.setFontSize(12);
+    doc.text(
+      content.important.title,
+      boxX + paddingX,
+      y + paddingTop
+    );
+
+    // texte
+    doc.setFontSize(9.5);
+    doc.setTextColor(255, 255, 255);
+
+    let textY = y + paddingTop + titleHeight;
+
+    rawLines.forEach((line) => {
+      doc.text(line, boxX + paddingX, textY);
+      textY += lineHeight;
+    });
+
+    // espace après
+    y += boxHeight + 6;
+
+    /* ===== SECTIONS ===== */
+    content.sections.forEach((section) => {
+      doc.setFontSize(12);
+      doc.setTextColor(96, 165, 250);
+      doc.text(section.title, 10, y);
+      y += 4;
+
+      doc.setDrawColor(51, 65, 85);
+      doc.line(10, y, w - 10, y);
+      y += 4;
+
+      doc.setFontSize(9);
+      doc.setTextColor(226, 232, 240);
+
+      section.rules.forEach((rule, i) => {
+        const lines = doc.splitTextToSize(
+          `${i + 1}. ${rule}`,
+          w - 24
+        );
+        lines.forEach((line) => {
+          doc.text(line, 14, y);
+          y += 4.2;
+        });
+        y += 1.5;
+      });
+
+      y += 3;
+    });
+
+    /* ===== FOOTER ===== */
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      "© 2026 StarLike Server. Tous droits réservés.",
+      w / 2,
+      h - 10,
+      { align: "center" }
+    );
+
+    doc.save(
+      lang === "fr"
+      ? "StarLike_Reglement_FR.pdf"
+      : "StarLike_Reglement_EN.pdf"
+    );
   };
 
-  const updateSectionTitle = (sectionIndex, newTitle) => {
-    const newSections = [...data[lang].sections];
-    newSections[sectionIndex].title = newTitle;
-
-    setData(prev => ({
-      ...prev,
-      [lang]: { ...prev[lang], sections: newSections }
-    }));
-  };
-
-  const updateRule = (sectionIndex, ruleIndex, newText) => {
-    const newSections = [...data[lang].sections];
-    newSections[sectionIndex].rules[ruleIndex] = newText;
-
-    setData(prev => ({
-      ...prev,
-      [lang]: { ...prev[lang], sections: newSections }
-    }));
-  };
-
-  const addRule = (sectionIndex) => {
-    const newSections = [...data[lang].sections];
-    newSections[sectionIndex].rules.push('Nouvelle règle...');
-
-    setData(prev => ({
-      ...prev,
-      [lang]: { ...prev[lang], sections: newSections }
-    }));
-  };
-
-  const removeRule = (sectionIndex, ruleIndex) => {
-    const newSections = [...data[lang].sections];
-    newSections[sectionIndex].rules.splice(ruleIndex, 1);
-
-    setData(prev => ({
-      ...prev,
-      [lang]: { ...prev[lang], sections: newSections }
-    }));
-  };
 
   /* ================= RENDER ================= */
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-200">
+    <div className="min-h-screen bg-slate-950 text-slate-200 flex flex-col">
+    {/* HEADER */}
+    <header className="bg-slate-900/80 border-b border-slate-800 px-6 py-4 flex justify-between items-center">
+    <div className="flex items-center gap-3">
+    <div className="w-9 h-9 bg-blue-600 rounded-lg flex items-center justify-center">
+    <Shield className="text-white" />
+    </div>
+    <div>
+    <h1 className="text-lg font-bold">StarLike Serveur</h1>
+    <p className="text-xs text-slate-400">RÈGLEMENT IG</p>
+    </div>
+    </div>
 
-      {/* HEADER */}
-      <header className="sticky top-0 z-40 bg-slate-900/80 backdrop-blur border-b border-slate-800">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
-              <Shield className="text-white" />
-            </div>
-            <div>
-              <h1 className="text-xl font-bold text-white">{content.subtitle}</h1>
-              <p className="text-xs text-slate-400 uppercase">{content.title}</p>
-            </div>
-          </div>
+    <div className="flex items-center gap-3">
+    <button
+    onClick={() => setLang(lang === "fr" ? "en" : "fr")}
+    className="px-3 py-1 bg-slate-800 rounded flex items-center gap-1"
+    >
+    <Globe size={14} /> {lang.toUpperCase()}
+    </button>
 
-          <div className="flex items-center gap-3">
-            <button
-              onClick={toggleLang}
-              className="px-3 py-1 rounded bg-slate-800 border border-slate-700 text-sm"
-            >
-              <Globe size={14} /> {lang.toUpperCase()}
-            </button>
+    {isAdmin ? (
+      <button
+      onClick={() => setIsAdmin(false)}
+      className="px-3 py-1 bg-red-500/20 text-red-400 rounded"
+      >
+      <LogOut size={14} />
+      </button>
+    ) : (
+      <button
+      onClick={() => setShowLogin(true)}
+      className="px-3 py-1 bg-slate-800 rounded"
+      >
+      <Lock size={14} />
+      </button>
+    )}
+    </div>
+    </header>
 
-            {isAdmin ? (
-              <button
-                onClick={handleLogout}
-                className="px-3 py-1 bg-red-500/20 text-red-400 rounded flex items-center gap-1"
-              >
-                <LogOut size={16} /> Logout
-              </button>
-            ) : (
-              <button
-                onClick={() => setShowLoginModal(true)}
-                className="px-3 py-1 bg-slate-800 text-slate-300 rounded"
-              >
-                <Lock size={16} />
-              </button>
-            )}
-          </div>
+    {/* MAIN */}
+    <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
+
+    {/* IMPORTANT */}
+    <div className="bg-gradient-to-r from-red-900/40 to-red-800/20 border border-red-500/20 rounded-2xl p-6 mb-8">
+    <h2 className="text-red-400 font-bold mb-3 flex items-center gap-2">
+    <AlertTriangle size={18} />
+    {content.important.title}
+    </h2>
+    <p className="whitespace-pre-line">{content.important.content}</p>
+    <button
+    onClick={generatePDF}
+    className="mt-4 px-4 py-2 bg-blue-600 rounded-lg font-bold"
+    >
+    📄 Télécharger le règlement
+    </button>
+    </div>
+
+    {/* EXTERNAL LINKS */}
+    <div className="mb-10 bg-slate-900/70 border border-slate-700 rounded-2xl p-6">
+    <h3 className="font-bold mb-5 text-slate-300">
+    {lang === "fr" ? "Liens officiels" : "Official links"}
+    </h3>
+
+    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+    {[
+      { key: "vote", label: "Vote", icon: ThumbsUp },
+      { key: "steam", label: "Steam", icon: Boxes },
+      { key: "youtube", label: "YouTube", icon: Youtube },
+      { key: "twitch", label: "Twitch", icon: Twitch },
+      { key: "discord", label: "Discord", icon: MessageCircle }
+    ].map(({ key, label, icon: Icon }) => {
+      const url = content.externalLinks?.[key] || "";
+      if (!url) return null;
+
+      return (
+        <a
+        key={key}
+        href={url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-800 hover:bg-blue-600 transition font-bold"
+        >
+        <Icon size={18} />
+        {label}
+        </a>
+      );
+    })}
+    </div>
+    </div>
+
+    {/* SAVE BAR */}
+    {isAdmin && (
+      <div className="flex items-center gap-4 mb-6">
+      <button
+      onClick={handleSave}
+      disabled={isSaving}
+      className="px-5 py-2 bg-green-600 rounded-lg flex items-center gap-2 font-bold"
+      >
+      {isSaving ? <Loader2 className="animate-spin" /> : <Save />}
+      Sauvegarder
+      </button>
+
+      {saveSuccess && (
+        <div className="flex items-center gap-2 text-green-400 font-bold">
+        <CheckCircle size={18} />
+        Sauvegarde réussie
         </div>
-      </header>
+      )}
+      </div>
+    )}
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* ADMIN TOOLBAR */}
-        {isAdmin && (
-          <div className="mb-8 p-4 bg-indigo-500/10 border border-indigo-500/20 rounded-xl flex justify-between">
-            <span className="text-indigo-300 font-bold">Mode Admin</span>
-            <button
-              onClick={handleSave}
-              className="bg-green-600 px-4 py-2 rounded text-white flex items-center gap-2"
-              disabled={isSaving}
-            >
-              {isSaving ? <Loader2 className="animate-spin" size={16} /> : <Save size={16} />}
-              Sauvegarder
-            </button>
-          </div>
-        )}
+    {/* CONTENT GRID */}
+    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {/* IMPORTANT */}
-        <div className="mb-10 bg-red-500/10 border border-red-500/20 rounded-xl p-6">
-          <h2 className="text-red-400 font-bold flex gap-2 mb-3">
-            <AlertTriangle size={18} />
-            {content.important.title}
-          </h2>
+    {/* MENU */}
+    <nav className="lg:col-span-3 space-y-2">
+    {content.sections.map((section) => {
+      const Icon = IconMap[section.icon] || Shield;
+      return (
+        <button
+        key={section.id}
+        onClick={() => setActiveTab(section.id)}
+        className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-left ${
+          activeTab === section.id
+          ? "bg-blue-600 text-white"
+          : "bg-slate-800/60"
+        }`}
+        >
+        <Icon size={16} />
+        {section.title}
+        </button>
+      );
+    })}
+    </nav>
 
-          {isAdmin ? (
-            <textarea
-              className="w-full h-40 bg-slate-900 border border-red-500/30 rounded p-3"
-              value={content.important.content}
-              onChange={(e) => updateImportant(e.target.value)}
-            />
-          ) : (
-            <p className="whitespace-pre-line">{content.important.content}</p>
-          )}
-        </div>
+    {/* CONTENT */}
+    <div className="lg:col-span-9 bg-slate-800/60 border border-slate-700 rounded-2xl p-6">
+    <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+    <Shield size={18} />
+    {activeSection.title}
+    </h2>
 
-        {/* CONTENT */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-          <nav className="lg:col-span-3 space-y-2">
-            {content.sections.map((section) => {
-              const Icon = IconMap[section.icon] || Shield;
-              return (
-                <button
-                  key={section.id}
-                  onClick={() => setActiveTab(section.id)}
-                  className={`w-full flex items-center gap-2 px-4 py-2 rounded ${
-                    activeTab === section.id
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-800 text-slate-400'
-                  }`}
-                >
-                  <Icon size={16} />
-                  {section.title}
-                </button>
-              );
-            })}
-          </nav>
+    <div className="space-y-3">
+    {activeSection.rules.map((rule, i) => (
+      <div
+      key={i}
+      className="flex gap-3 bg-slate-900/60 rounded-xl p-4"
+      >
+      <span className="w-7 h-7 flex items-center justify-center rounded-full bg-slate-700 text-blue-400 font-bold text-sm">
+      {i + 1}
+      </span>
 
-          <div className="lg:col-span-9">
-            {content.sections.map((section, sIndex) =>
-              activeTab === section.id && (
-                <div key={section.id} className="bg-slate-800 rounded-xl p-6">
-                  {isAdmin ? (
-                    <input
-                      className="w-full bg-slate-900 text-white text-2xl font-bold mb-6 p-2 rounded"
-                      value={section.title}
-                      onChange={(e) => updateSectionTitle(sIndex, e.target.value)}
-                    />
-                  ) : (
-                    <h2 className="text-2xl font-bold mb-6">{section.title}</h2>
-                  )}
+      {isAdmin ? (
+        <>
+        <textarea
+        className="flex-1 bg-transparent resize-none outline-none"
+        value={rule}
+        onChange={(e) => {
+          const copy = structuredClone(data);
+          copy[lang].sections[sectionIndex].rules[i] =
+          e.target.value;
+          setData(copy);
+        }}
+        />
+        <button
+        onClick={() => removeRule(i)}
+        className="text-red-400 hover:text-red-500"
+        >
+        <Trash2 size={18} />
+        </button>
+        </>
+      ) : (
+        <p>{rule}</p>
+      )}
+      </div>
+    ))}
 
-                  <div className="space-y-3">
-                    {section.rules.map((rule, rIndex) => (
-                      <div key={rIndex} className="flex gap-3">
-                        <span className="text-blue-400 font-bold">{rIndex + 1}</span>
+    {isAdmin && (
+      <button
+      onClick={addRule}
+      className="mt-4 w-full py-3 border-2 border-dashed border-slate-600 rounded-xl text-slate-400 hover:text-blue-400 flex items-center justify-center gap-2"
+      >
+      <Plus size={18} /> Ajouter une règle
+      </button>
+    )}
+    </div>
+    </div>
+    </div>
+    </main>
+    {/* FOOTER */}
+    <footer className="bg-slate-900/80 border-t border-slate-800 text-center py-4 text-sm text-slate-400">
+    © 2026 StarLike Server. Tous droits réservés.
+    </footer>
 
-                        {isAdmin ? (
-                          <>
-                            <textarea
-                              className="flex-1 bg-slate-900 rounded p-2"
-                              value={rule}
-                              onChange={(e) => updateRule(sIndex, rIndex, e.target.value)}
-                            />
-                            <button
-                              onClick={() => removeRule(sIndex, rIndex)}
-                              className="text-red-400"
-                            >
-                              <Trash2 size={18} />
-                            </button>
-                          </>
-                        ) : (
-                          <p>{rule}</p>
-                        )}
-                      </div>
-                    ))}
-
-                    {isAdmin && (
-                      <button
-                        onClick={() => addRule(sIndex)}
-                        className="mt-4 w-full border border-dashed border-slate-600 rounded p-3 text-slate-400"
-                      >
-                        <Plus size={16} /> Ajouter une règle
-                      </button>
-                    )}
-                  </div>
-                </div>
-              )
-            )}
-          </div>
-        </div>
-      </main>
-
-      {/* LOGIN MODAL */}
-      <AnimatePresence>
-        {showLoginModal && (
-          <motion.div
-            className="fixed inset-0 bg-black/80 flex items-center justify-center z-50"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <motion.div className="bg-slate-900 p-6 rounded-xl w-full max-w-md">
-              <h3 className="text-xl font-bold mb-4">Admin</h3>
-
-              <form onSubmit={submitLogin} className="space-y-3">
-                <input
-                  type="password"
-                  className="w-full bg-slate-800 p-3 rounded"
-                  placeholder="Mot de passe"
-                  value={passwordInput}
-                  onChange={(e) => setPasswordInput(e.target.value)}
-                />
-
-                {loginError && <p className="text-red-400">{loginError}</p>}
-
-                <button className="w-full bg-blue-600 py-2 rounded text-white">
-                  Se connecter
-                </button>
-              </form>
-
-              <button
-                onClick={() => setShowLoginModal(false)}
-                className="mt-4 text-slate-400"
-              >
-                Fermer
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    {/* LOGIN MODAL */}
+    {showLogin && (
+      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+      <form
+      onSubmit={submitLogin}
+      className="bg-slate-900 p-6 rounded-xl w-80 border border-slate-700"
+      >
+      <h3 className="font-bold mb-4">Admin</h3>
+      <input
+      type="password"
+      className="w-full p-2 bg-slate-800 rounded mb-2"
+      placeholder="Mot de passe"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+      />
+      {loginError && (
+        <p className="text-red-400 text-sm mb-2">{loginError}</p>
+      )}
+      <button className="w-full bg-blue-600 py-2 rounded font-bold">
+      Se connecter
+      </button>
+      </form>
+      </div>
+    )}
     </div>
   );
 }

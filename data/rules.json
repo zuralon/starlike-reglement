@@ -1,20 +1,135 @@
 {
-  "fr": {
-    "title": "RÈGLEMENT IG",
-    "subtitle": "StraLike Serveur",
-    "important": {
-      "title": "IMPORTANT",
-      "content": "ATTENTION car les règles peuvent changer..."
-    },
-    "sections": []
+"fr": {
+  "title": "RÈGLEMENT IG",
+  "subtitle": "StarLike Serveur",
+
+  "externalLinks": {
+    "vote": "https://top-serveurs.net/garrys-mod/vote/stralike-basewars",
+    "steam": "https://steamcommunity.com/sharedfiles/filedetails/?id=3603774177",
+    "youtube": "https://www.youtube.com/@StarLikeCommunity",
+    "twitch": "https://www.twitch.tv/stralike",
+    "discord": "https://discord.gg/Wdfq56TV6D"
   },
-  "en": {
-    "title": "RULES IG",
-    "subtitle": "StraLike Server",
-    "important": {
+
+  "important": {
       "title": "IMPORTANT",
-      "content": "ATTENTION because the rules can change..."
+      "content": "ATTENTION car les règles peuvent changer à tout moment donc penser à lire le règlement au minimum une fois par semaine. Cela pourrait éviter les problèmes IG.\nSi vous avez des idées pour améliorer le règlement n’hésitez pas à faire un Ticket sur le Discord.\nIl est Important de fournir une preuve vidéo pour un soucis en jeu lorsque vous faites un tickets pour accélérer leur traitement.\nSi vous avez reçu un WARN INJUSTIFIÉ ou une autre sanction, n'hésitez pas à ouvrir un ticket sur le Discord afin de résoudre le problème."
     },
-    "sections": []
+    "sections": [
+      {
+        "id": "general",
+        "title": "Règles Générales",
+        "icon": "Shield",
+        "rules": [
+          "Il est Interdit d’utiliser une Soundboard.",
+          "Vous devez avoir un minimum de Fair-Play envers les autres Joueurs.",
+          "Il est Interdit de Props Block / Props Fly etc…",
+          "Il est Interdit de Tuer une personne non Armée sauf si vous avez une raison valable.",
+          "Il est Interdit de Farm en dehors de votre Base.",
+          "L’utilisation de logiciels tiers pour exploiter des Bugs / AimBot etc… est Strictement Interdite.",
+          "Il est Interdit de rentrer dans une base qui ne vous appartient pas (sauf en RAID)."
+        ]
+      },
+      {
+        "id": "construction",
+        "title": "Règles pour les Constructions",
+        "icon": "Hammer",
+        "rules": [
+          "Il est interdit de faire une base en extérieur.",
+          "Il est interdit de construire sur les toits.",
+          "Seuls les props doivent être utilisés pour bloquer les entrées (aucun autre moyen n’est autorisé)."
+        ]
+      },
+      {
+        "id": "raid",
+        "title": "Règles pour les Raid",
+        "icon": "Swords",
+        "rules": [
+          "Le SpawnKill est autorisé seulement lors de la destruction des points de spawn.",
+          "Il est interdit de placer son point de spawn dans une base ennemie.",
+          "Il est Interdit de Booster un joueur en RAID.",
+          "LVL 750 requis."
+        ]
+      },
+      {
+        "id": "faction",
+        "title": "Règles pour les Factions",
+        "icon": "Flag",
+        "rules": [
+          "Votre base doit être construite dans le même bâtiment.",
+          "Les noms de faction ne doivent pas contenir de propos Racistes / Vulgaires / Inappropriés etc…",
+          "Il est Interdit de mettre une couleur qui rend votre nom invisible.",
+          "Lorsque vous voulez capturer un drapeau vous devez être obligatoirement armé.",
+          "Il est Interdit de s’amuser à rentrer dans la zone puis d’en ressortir tout le temps (soit vous capturez le point soit vous ne faites rien)."
+        ]
+      }
+    ],
+    "lastUpdate": "2026-01-18"
+  },
+"en": {
+  "title": "RULES IG",
+  "subtitle": "StarLike Server",
+
+  "externalLinks": {
+    "vote": "https://top-serveurs.net/garrys-mod/vote/stralike-basewars",
+    "steam": "https://steamcommunity.com/sharedfiles/filedetails/?id=3603774177",
+    "youtube": "https://www.youtube.com/@StarLikeCommunity",
+    "twitch": "https://www.twitch.tv/stralike",
+    "discord": "https://discord.gg/Wdfq56TV6D"
+  },
+
+  "important": {
+  "title": "IMPORTANT",
+      "content": "ATTENTION because the rules can change at any time so think about reading the regulations at least once a week. This could avoid IG issues.\nIf you have ideas to improve the regulation, don’t hesitate to submit a ticket on Discord.\nIt is important to provide video proof for an in-game issue when you make a ticket to speed up their processing.\nIf you have received an UNJUSTIFIED WARN or other sanction, do not hesitate to open a ticket on the Discord in order to solve the problem."
+    },
+    "sections": [
+      {
+        "id": "general",
+        "title": "General Rules",
+        "icon": "Shield",
+        "rules": [
+          "It is forbidden to use a Soundboard.",
+          "You must have a minimum level of fair play towards other Players.",
+          "It is forbidden to Props Block / Props Fly etc...",
+          "It is forbidden to kill an unarmed person unless you have a valid reason.",
+          "It is forbidden to Farm outside your Base.",
+          "The use of third-party software to exploit Bugs / AimBot etc. is strictly prohibited.",
+          "It is forbidden to enter a base that does not belong to you (except in RAID)."
+        ]
+      },
+      {
+        "id": "construction",
+        "title": "Rules for the Constructions",
+        "icon": "Hammer",
+        "rules": [
+          "It is forbidden to make a base outdoors.",
+          "It is forbidden to build on rooftops.",
+          "Only props should be used to block entries (no other means are allowed)."
+        ]
+      },
+      {
+        "id": "raid",
+        "title": "Rules for the Raid",
+        "icon": "Swords",
+        "rules": [
+          "SpawnKill is allowed only when destroying spawn points.",
+          "It is forbidden to place your spawn point in an enemy base.",
+          "It is forbidden to boost a player in RAID.",
+          "LVL 750 required."
+        ]
+      },
+      {
+        "id": "faction",
+        "title": "Rules for the Factions",
+        "icon": "Flag",
+        "rules": [
+          "Your base must be built in the same building.",
+          "Faction names must not contain racist / vulgar / inappropriate remarks etc...",
+          "It is forbidden to put a color that makes your name invisible.",
+          "When you want to capture a flag you must be obligatorily armed.",
+          "It is forbidden to keep entering and leaving the zone repeatedly (either you capture the point or you do nothing)."
+        ]
+      }
+    ]
   }
 }
